@@ -1,0 +1,12 @@
+{
+	"plate1.jpg" : [["vegetables", 110], ["salmon", 180]],
+	"plate2.jpg" : [["vegetables", 100], ["chicken", 145]],
+	"plate3.jpg" : [["vegetables", 100], ["chicken", 150]],
+	"plate4.jpg" : [["salad", 45], ["turkey", 190]],
+	"plate5.jpg" : [["fruits", 70], ["bread", 265], ["meat", 150], ["vegetables", 90]],
+	"plate6.jpg" : [["rice", 130], ["pork", 250], ["fruits", 70], ["green beans", 30]],
+	"plate7.jpg" : [["strawberries", 50], ["rice", 130], ["chicken", 170], ["broccoli", 35]],
+	"plate8.jpg" : [["corn", 85], ["pie", 230], ["turkey", 200], ["mashed potatoes", 90], ["green beans", 30]],
+	"plate9.jpg" : [["kiwi", 60], ["salami", 330], ["chicken nuggets", 300]],
+	"plate10.jpg" : [["beef", 170], ["fruits", 40]]
+}

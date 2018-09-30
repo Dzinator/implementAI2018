@@ -14,6 +14,13 @@ cv::Mat detectPlateMask(cv::Mat src) {
     // Find circles
     HoughCircles( src_gray, circles, cv::HOUGH_GRADIENT, 1, src_gray.rows/8, 200, 100, 0, 0 );
 
+    // If no circle found
+    if(circles.empty()) {
+        cv::Mat emptyMask = cv::Mat(src.size(), src.type(), cv::Scalar(255, 255, 255));
+        cvtColor(emptyMask, emptyMask, cv::COLOR_BGR2GRAY, 1);
+        return emptyMask;
+    }
+
     // Find the biggest circle
     cv::Point circleCenter;
     int circleRadius = 0;
@@ -83,7 +90,7 @@ cv::Mat detectFoodMask(cv::Mat mat) {
 }
 
 
-std::vector<cv::Mat> groupImages(cv::Mat mat, int k) {
+std::vector<cv::Mat> groupMasks(cv::Mat mat, int k) {
     std::vector<std::vector<cv::Point>> contours;
     cv::findContours(mat, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE);
 
@@ -112,8 +119,14 @@ std::vector<cv::Mat> groupImages(cv::Mat mat, int k) {
 
     std::vector<cv::Mat> mats;
     for(int i=0; i < kContours.size(); i++) {
+        // Smooth contours
+        std::vector<cv::Point> convexHullPoints;
+        cv::convexHull(kContours[i], convexHullPoints);
+
         cv::Mat partMat = cv::Mat::zeros(mat.size(), mat.type());
-        cv::drawContours(partMat, kContours, i, cv::Scalar(255), cv::FILLED);
+//        cv::drawContours(partMat, kContours, i, cv::Scalar(255), cv::FILLED);
+        cv::fillConvexPoly(partMat, convexHullPoints, cv::Scalar(255));
+
         mats.push_back(partMat);
     }
     return mats;
@@ -135,22 +148,30 @@ cv::Mat cleanMask(cv::Mat mat) {
 
 int main() {
     cv::Mat src;
-    src = cv::imread("/tmp/food-small.jpg", 1 );
+    src = cv::imread("/tmp/food.jpg", 1 );
     if( !src.data ) {
         throw "Error loading the image";
     }
 
+    int NUMBER_OF_ITEMS = 4;
     cv::Mat plateMask = detectPlateMask(src);
-    cv::Mat plateKM = reduceColorKmeans(src, plateMask, 4);
+    cv::Mat plateKM = reduceColorKmeans(src, plateMask, NUMBER_OF_ITEMS + 1);
     cv::Mat foodMask = detectFoodMask(plateKM);
     cv::Mat finalMask;
     cv::bitwise_and(foodMask, plateMask, finalMask);
     cv::Mat finalCleanMask = cleanMask(finalMask);
-    std::vector<cv::Mat> images = groupImages(finalCleanMask, 4);
+    std::vector<cv::Mat> masks = groupMasks(finalCleanMask, NUMBER_OF_ITEMS);
 
-    /// Show your results
-    namedWindow("Plate", cv::WINDOW_AUTOSIZE );
-    imshow("Plate", images[0]);
+    for(int i=0; i < masks.size(); i++) {
+        // Show your results
+        std::string windowName = "Plate" + std::to_string(i);
+        cv::Mat foodComp;
+        src.copyTo(foodComp, masks[i]);
+        namedWindow(windowName, cv::WINDOW_AUTOSIZE );
+        imshow(windowName, foodComp);
+    }
+//    namedWindow("test", cv::WINDOW_AUTOSIZE );
+//    imshow("test", finalCleanMask);
     cv::waitKey(0);
     return 0;
 }

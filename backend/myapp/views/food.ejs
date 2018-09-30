@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>SmartPortion</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        .card-title {
+            font-size: 18px;
+        }
+
+        .card-op {
+            font-size: 40px;
+            margin-top: 100px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+    <div class="container">
+        <a class="navbar-brand" href="#">SmartPortion</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Home
+                        <span class="sr-only">(current)</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Page Content -->
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <h1 class="mt-5">SmartPortion</h1>
+            <p class="lead">Description goes here</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm">
+            <div class="card">
+                <div class="card-header">Original Image</div>
+                <div class="card-block text-center">
+                    <img id="imageOriginal" alt="Upload" class="card-img-top"/>
+                </div>
+                <div class="card-footer text-muted">
+                    <input type="file" id="imageInput" name="file" />
+                </div>
+            </div>
+        </div>
+        <div class="col-sm">
+            <div class="card">
+                <div class="card-header">Modified Image</div>
+                <div class="card-block">
+                    <div class="row mt-lg-2">
+                        <div class="col-md-2 text-center">Replace</div>
+                        <div class="col-md-2 text-center">
+                            <select name="replace-old" id="replace">
+                                <option value="0">0</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 text-center">with</div>
+                        <div class="col-md-3 text-center">
+                            <select name="replace-new" id="replace">
+                                <option value="0">Tomato</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <button class="btn btn-primary">Replace!</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <canvas id="imageCanvas"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12 mt-lg-4">
+            <div class="card">
+                <div class="card-header">Detect circle</div>
+                <div class="card-block">
+                    <div class="row">
+                        <div class="col-sm-3 text-center">
+                            <img class="image1 img-fluid" src="" alt="Original image">
+                        </div>
+                        <div class="col-sm-1 text-center card-op">+</div>
+                        <div class="col-sm-3 text-center">
+                            <img class="image2 img-fluid" src="" alt="Plate mask">
+                        </div>
+                        <div class="col-sm-2 text-center card-op">=</div>
+                        <div class="col-sm-3 text-center">
+                            <img class="image3 img-fluid" src="" alt="Plate image">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12 mt-lg-4">
+            <div class="card">
+                <div class="card-header">Reduce color using K-Means</div>
+                <div class="card-block">
+                    <div class="row">
+                        <div class="col-sm-3 text-center">
+                            <img class="image3 img-fluid" src="" alt="Plate image">
+                        </div>
+                        <div class="col-sm-1 text-center card-op">+</div>
+                        <div class="col-sm-3 text-center card-op">
+                            K-Means Algorithm
+                        </div>
+                        <div class="col-sm-2 text-center card-op">=</div>
+                        <div class="col-sm-3 text-center">
+                            <img class="image4 img-fluid" src="" alt="Plate image reduced colors">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12 mt-lg-4">
+            <div class="card">
+                <div class="card-header">Extract food + Cleaning noise</div>
+                <div class="card-block">
+                    <div class="row">
+                        <div class="col-sm-5 text-center">
+                            <img class="image5 img-fluid" src="" alt="Food mask">
+                        </div>
+                        <div class="col-sm-1 text-center card-op">=&gt;</div>
+                        <div class="col-sm-5 text-center">
+                            <img class="image6 img-fluid" src="" alt="Food mask cleaned">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12 mt-lg-4">
+            <div class="card">
+                <div class="card-header">Find food composites using K-Means</div>
+                <div class="card-block">
+                    <div class="row">
+                        <div class="col-sm-12 text-center">
+                            Using Google Vision API we detect the type of each food part
+                        </div>
+                    </div>
+                    <div class="row" id="food-parts"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap core JavaScript -->
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script>
+var classImageMap = {
+    "image1": "ocv-image1.jpg",
+    "image2": "ocv-image2.jpg",
+    "image3": "ocv-image3.jpg",
+    "image4": "ocv-image4.jpg",
+    "image5": "ocv-image5.jpg",
+    "image6": "ocv-image6.jpg",
+};
+
+function syncImages() {
+    var times = 3000;
+    (function startRefresh() {
+        for(key in classImageMap) {
+            var address = "/images/ocv/" + classImageMap[key];
+            $("." + key).each(function() {
+                $(this).attr('src', address + "?time="+new Date().getTime());
+                console.log("Updating " + key + " with address: " + address)
+            });
+        }
+        setTimeout(startRefresh,times);
+    })();
+}
+
+syncImages();
+</script>
+</body>
+
+</html>

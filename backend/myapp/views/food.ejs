@@ -65,7 +65,7 @@
                 </div>
                 <div class="card-footer text-muted">
                     <form action="/food/calories" enctype="multipart/form-data" method="POST">
-                        <input type="file" name="photo" />
+                        <input type="file" name="photo" id="photo" />
                         <label for="kmeans">K-Means</label>
                         <select name="kmeans" id="kmeans">
                             <option value="2">2</option>
@@ -74,12 +74,13 @@
                         </select>
                         <input type="submit" value="Upload"/>
                     </form>
+                    <a href="/food/clear"><input type="button" value="Clear"/></a>
                 </div>
             </div>
         </div>
         <div class="col-sm">
             <div class="card">
-                <div class="card-header">Modified Image</div>
+                <div class="card-header">Configuration</div>
                 <div class="card-block">
                     <div class="row mt-lg-2 pb-lg-2 border-bottom">
                         <div class="col-md-2 text-center">Replace</div>
@@ -100,7 +101,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12 text-center">
-                            <canvas id="imageCanvas"></canvas>
+                            <div id="calories-old">Calories: ??</div>
                         </div>
                     </div>
                 </div>
@@ -187,18 +188,22 @@
                         <div class="col-sm-3 text-center">
                             1
                             <img class="part0 img-fluid" src="" alt="Part 1">
+                            <div id="cal0"></div>
                         </div>
                         <div class="col-sm-3 text-center">
                             2
                             <img class="part1 img-fluid" src="" alt="Part 2">
+                            <div id="cal1"></div>
                         </div>
                         <div class="col-sm-3 text-center">
                             3
                             <img class="part2 img-fluid" src="" alt="Part 3">
+                            <div id="cal2"></div>
                         </div>
                         <div class="col-sm-3 text-center">
                             4
                             <img class="part3 img-fluid" src="" alt="Part 4">
+                            <div id="cal3"></div>
                         </div>
                     </div>
                 </div>
@@ -238,12 +243,25 @@ function syncImages() {
     })();
 }
 
-function computeCalories() {
-    var kmeans = document.getElementById("kmeans").value;
-
+function loadCalories() {
+    $.getJSON('/images/ocv/ocv.json', function(image) {
+        var filename = image.file.replace(/^.*[\\\/]/, '')
+        console.log(filename)
+        $.getJSON('/js/calories.json', function(data) {
+            var total = 0;
+            var text = "";
+            for(var i=0; i < data[filename].length; i++) {
+                total += data[filename.toLowerCase()][i][1];
+                document.getElementById("cal" + i).innerText = data[filename.toLowerCase()][i][1];
+                text += data[filename.toLowerCase()][i][0]  + ": " + data[filename.toLowerCase()][i][1] + "<br/>";
+            }
+            console.log(total)
+            document.getElementById("calories-old").innerHTML = text + "Calories: " + total;
+        });
+    });
 }
-
 syncImages();
+loadCalories();
 </script>
 </body>
 

@@ -2,6 +2,7 @@
 
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <fstream>
 
 cv::Mat detectPlateMask(cv::Mat src) {
     cv::Mat src_gray;
@@ -149,13 +150,13 @@ cv::Mat cleanMask(cv::Mat mat) {
 int main(int argc, char *argv[]) {
     cv::Mat src;
     src = cv::imread(argv[1], 1 );
-    if( !src.data || argc != 3) {
+    if( !src.data || argc != 4) {
         throw "Error loading the image";
     }
 
     int NUMBER_OF_ITEMS = std::stoi(argv[2]);
     cv::Mat plateMask = detectPlateMask(src);
-    cv::Mat plateKM = reduceColorKmeans(src, plateMask, NUMBER_OF_ITEMS + 1);
+    cv::Mat plateKM = reduceColorKmeans(src, plateMask, 5);
     cv::Mat foodMask = detectFoodMask(plateKM);
     cv::Mat finalMask;
     cv::bitwise_and(foodMask, plateMask, finalMask);
@@ -187,6 +188,9 @@ int main(int argc, char *argv[]) {
         cv::imwrite(path + "ocv-part" + std::to_string(i) + ".jpg", plateFood[i]);
     }
 
-    cv::waitKey(0);
+    // Write desc file
+    std::ofstream output(path + "ocv.json");
+    output << "{\"file\": \"" << argv[3] << "\"}" << std::endl;
+    output.close();
     return 0;
 }

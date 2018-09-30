@@ -133,27 +133,27 @@ std::vector<cv::Mat> groupMasks(cv::Mat mat, int k) {
 }
 
 cv::Mat cleanMask(cv::Mat mat) {
+    cv::Mat dst;
     // Erode
     int erodeVal = 6;
     cv::Mat eKernel(cv::getStructuringElement(cv::MORPH_RECT, cv::Size(erodeVal, erodeVal)));
-    cv::erode(mat, mat, eKernel, cv::Point(-1, -1), 1);
+    cv::erode(mat, dst, eKernel, cv::Point(-1, -1), 1);
 
     // Dilate
     int dilateVal = 4;
     cv::Mat dKernel(cv::getStructuringElement(cv::MORPH_RECT, cv::Size(dilateVal, dilateVal)));
-    cv::dilate(mat, mat, dKernel, cv::Point(-1, -1), 1);
-    return mat;
+    cv::dilate(dst, dst, dKernel, cv::Point(-1, -1), 1);
+    return dst;
 }
 
-
-int main() {
+int main(int argc, char *argv[]) {
     cv::Mat src;
-    src = cv::imread("/tmp/food.jpg", 1 );
-    if( !src.data ) {
+    src = cv::imread(argv[1], 1 );
+    if( !src.data || argc != 3) {
         throw "Error loading the image";
     }
 
-    int NUMBER_OF_ITEMS = 4;
+    int NUMBER_OF_ITEMS = std::stoi(argv[2]);
     cv::Mat plateMask = detectPlateMask(src);
     cv::Mat plateKM = reduceColorKmeans(src, plateMask, NUMBER_OF_ITEMS + 1);
     cv::Mat foodMask = detectFoodMask(plateKM);
@@ -161,17 +161,32 @@ int main() {
     cv::bitwise_and(foodMask, plateMask, finalMask);
     cv::Mat finalCleanMask = cleanMask(finalMask);
     std::vector<cv::Mat> masks = groupMasks(finalCleanMask, NUMBER_OF_ITEMS);
+    std::vector<cv::Mat> plateFood;
 
     for(int i=0; i < masks.size(); i++) {
-        // Show your results
-        std::string windowName = "Plate" + std::to_string(i);
         cv::Mat foodComp;
         src.copyTo(foodComp, masks[i]);
-        namedWindow(windowName, cv::WINDOW_AUTOSIZE );
-        imshow(windowName, foodComp);
+        plateFood.push_back(foodComp);
     }
 //    namedWindow("test", cv::WINDOW_AUTOSIZE );
 //    imshow("test", finalCleanMask);
+
+    // Save images
+    std::string path = "/home/amir/github/implementAI2018/backend/myapp/public/images/ocv/";
+    cv::imwrite(path + "ocv-image1.jpg", src);
+    cv::imwrite(path + "ocv-image2.jpg", plateMask);
+
+    cv::Mat plateImage;
+    src.copyTo(plateImage, plateMask);
+    cv::imwrite(path + "ocv-image3.jpg", plateImage);
+    cv::imwrite(path + "ocv-image4.jpg", plateKM);
+    cv::imwrite(path + "ocv-image5.jpg", finalMask);
+    cv::imwrite(path + "ocv-image6.jpg", finalCleanMask);
+    for(size_t i=0; i < plateFood.size(); i++) {
+        cv::imwrite(path + "ocv-mask" + std::to_string(i) + ".jpg", masks[i]);
+        cv::imwrite(path + "ocv-part" + std::to_string(i) + ".jpg", plateFood[i]);
+    }
+
     cv::waitKey(0);
     return 0;
 }

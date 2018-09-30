@@ -11,7 +11,7 @@
     <title>SmartPortion</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
         .card-title {
@@ -61,10 +61,18 @@
             <div class="card">
                 <div class="card-header">Original Image</div>
                 <div class="card-block text-center">
-                    <img id="imageOriginal" alt="Upload" class="card-img-top"/>
+                    <img id="imageOriginal" src="/images/ocv/ocv.jpg" alt="Upload" class="card-img-top"/>
                 </div>
                 <div class="card-footer text-muted">
-                    <input type="file" id="imageInput" name="file" />
+                    <form action="/food/calories" enctype="multipart/form-data" method="POST">
+                        <input type="file" name="photo" />
+                        <label for="kmeans">K-Means</label>
+                        <select name="kmeans" id="kmeans">
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                        </select>
+                        <input type="submit" value="Upload"/>
+                    </form>
                 </div>
             </div>
         </div>
@@ -72,16 +80,25 @@
             <div class="card">
                 <div class="card-header">Modified Image</div>
                 <div class="card-block">
-                    <div class="row mt-lg-2">
+                    <div class="row mt-lg-2 pb-lg-2 border-bottom">
+                        <div class="col-md-4 text-center">K-Means value:</div>
+                        <div class="col-md-4 text-center">
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <button class="btn btn-primary">Compute calories</button>
+                        </div>
+                    </div>
+
+                    <div class="row mt-lg-2 pb-lg-2 border-bottom">
                         <div class="col-md-2 text-center">Replace</div>
                         <div class="col-md-2 text-center">
-                            <select name="replace-old" id="replace">
+                            <select name="replace-old" id="replace-old">
                                 <option value="0">0</option>
                             </select>
                         </div>
                         <div class="col-md-2 text-center">with</div>
                         <div class="col-md-3 text-center">
-                            <select name="replace-new" id="replace">
+                            <select name="replace-new" id="replace-new">
                                 <option value="0">Tomato</option>
                             </select>
                         </div>
@@ -174,7 +191,20 @@
                             Using Google Vision API we detect the type of each food part
                         </div>
                     </div>
-                    <div class="row" id="food-parts"></div>
+                    <div class="row" id="food-parts">
+                        <div class="col-sm-3 text-center">
+                            <img class="part0 img-fluid" src="" alt="Part 1">
+                        </div>
+                        <div class="col-sm-3 text-center">
+                            <img class="part1 img-fluid" src="" alt="Part 2">
+                        </div>
+                        <div class="col-sm-3 text-center">
+                            <img class="part2 img-fluid" src="" alt="Part 3">
+                        </div>
+                        <div class="col-sm-3 text-center">
+                            <img class="part3 img-fluid" src="" alt="Part 4">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -182,8 +212,8 @@
 </div>
 
 <!-- Bootstrap core JavaScript -->
-<script src="vendor/jquery/jquery.min.js"></script>
-<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/vendor/jquery/jquery.min.js"></script>
+<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script>
 var classImageMap = {
     "image1": "ocv-image1.jpg",
@@ -192,6 +222,10 @@ var classImageMap = {
     "image4": "ocv-image4.jpg",
     "image5": "ocv-image5.jpg",
     "image6": "ocv-image6.jpg",
+    "part0": "ocv-part0.jpg",
+    "part1": "ocv-part1.jpg",
+    "part2": "ocv-part2.jpg",
+    "part3": "ocv-part3.jpg",
 };
 
 function syncImages() {
@@ -199,13 +233,18 @@ function syncImages() {
     (function startRefresh() {
         for(key in classImageMap) {
             var address = "/images/ocv/" + classImageMap[key];
-            $("." + key).each(function() {
+            jQuery("." + key).each(function() {
                 $(this).attr('src', address + "?time="+new Date().getTime());
                 console.log("Updating " + key + " with address: " + address)
             });
         }
         setTimeout(startRefresh,times);
     })();
+}
+
+function computeCalories() {
+    var kmeans = document.getElementById("kmeans").value;
+
 }
 
 syncImages();

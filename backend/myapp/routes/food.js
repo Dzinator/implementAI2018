@@ -25,12 +25,12 @@ router.post('/calories', upload.single('photo'), function(req, res, next) {
     }
 
     var directory = "/home/amir/github/implementAI2018/backend/myapp/public/images/ocv/";
-    fs.readdir(directory, (err, files) => {
+    fs.readdirSync(directory, (err, files) => {
         if (err) throw err;
 
         for (const file of files) {
             if(file !== "ocv.jpg") {
-                fs.unlink(path.join(directory, file), err => {
+                fs.unlinkSync(path.join(directory, file), err => {
                     if (err) throw err;
                 });
             }

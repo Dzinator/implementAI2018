@@ -32,6 +32,23 @@ router.get('/clear', function(req, res, next) {
     res.redirect('/food');
 });
 
+router.get('/replace/:text/:id', function(req, res, next) {
+    exec('/home/amir/github/implementAI2018/opencv/cmake-build-debug/food-detection '
+        + '"/home/amir/github/implementAI2018/backend/myapp/public/images/ocv/ocv.jpg" '
+        + 0 + ' '
+        + "ignore" + ' '
+        + '"/home/amir/github/implementAI2018/food/replacement/' + req.params.text + '" '
+        + '"/home/amir/github/implementAI2018/backend/myapp/public/images/ocv/ocv-mask' + req.params.id + '.jpg" '
+        , (err, stdout, stderr) => {
+        if (err) {
+            return;
+        }
+
+        // the *entire* stdout and stderr (buffered)
+        res.redirect('/food');
+    });
+});
+
 router.post('/calories', upload.single('photo'), function(req, res, next) {
     if (!req.file) {
         return res.status(400).send('No files were uploaded.');

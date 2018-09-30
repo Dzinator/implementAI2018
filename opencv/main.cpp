@@ -150,8 +150,20 @@ cv::Mat cleanMask(cv::Mat mat) {
 int main(int argc, char *argv[]) {
     cv::Mat src;
     src = cv::imread(argv[1], 1 );
-    if( !src.data || argc != 4) {
+    if( !src.data) {
         throw "Error loading the image";
+    }
+    cv::Mat replaceSrc;
+    cv::Mat replaceMask;
+    std::string path = "/home/amir/github/implementAI2018/backend/myapp/public/images/ocv/";
+    if(argc == 6) {
+        replaceSrc = cv::imread(argv[4], 1);
+        replaceMask = cv::imread(argv[5], 1);
+        cv::resize(replaceSrc, replaceSrc, replaceMask.size());
+        cv::Mat replace = src.clone();
+        replaceSrc.copyTo(replace, replaceMask);
+        cv::imwrite(path + "ocv-replace.jpg", replace);
+        return 0;
     }
 
     int NUMBER_OF_ITEMS = std::stoi(argv[2]);
@@ -173,7 +185,6 @@ int main(int argc, char *argv[]) {
 //    imshow("test", finalCleanMask);
 
     // Save images
-    std::string path = "/home/amir/github/implementAI2018/backend/myapp/public/images/ocv/";
     cv::imwrite(path + "ocv-image1.jpg", src);
     cv::imwrite(path + "ocv-image2.jpg", plateMask);
 

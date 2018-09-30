@@ -52,7 +52,7 @@
     <div class="row">
         <div class="col-lg-12 text-center">
             <h1 class="mt-5">SmartPortion</h1>
-            <p class="lead">Description goes here</p>
+            <p class="lead"></p>
         </div>
     </div>
 
@@ -82,21 +82,30 @@
             <div class="card">
                 <div class="card-header">Configuration</div>
                 <div class="card-block">
-                    <div class="row mt-lg-2 pb-lg-2 border-bottom">
+                    <div class="row mt-lg-2 pb-lg-2 ">
                         <div class="col-md-2 text-center">Replace</div>
                         <div class="col-md-2 text-center">
                             <select name="replace-old" id="replace-old">
-                                <option value="0">0</option>
+                                <option value="0">1</option>
+                                <option value="1">2</option>
+                                <option value="2">3</option>
+                                <option value="3">4</option>
                             </select>
                         </div>
                         <div class="col-md-2 text-center">with</div>
                         <div class="col-md-3 text-center">
                             <select name="replace-new" id="replace-new">
-                                <option value="0">Tomato</option>
                             </select>
                         </div>
-                        <div class="col-md-3 text-center">
-                            <button class="btn btn-primary">Replace!</button>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <img class="img-fluid" src="/images/ocv/ocv-replace.jpg" alt="">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <button class="btn btn-primary" onclick="replace()">Replace!</button>
                         </div>
                     </div>
                     <div class="row">
@@ -236,7 +245,6 @@ function syncImages() {
             var address = "/images/ocv/" + classImageMap[key];
             jQuery("." + key).each(function() {
                 $(this).attr('src', address + "?time="+new Date().getTime());
-                console.log("Updating " + key + " with address: " + address)
             });
         }
         setTimeout(startRefresh,times);
@@ -247,6 +255,7 @@ function loadCalories() {
     $.getJSON('/images/ocv/ocv.json', function(image) {
         var filename = image.file.replace(/^.*[\\\/]/, '')
         console.log(filename)
+        if(!filename) return;
         $.getJSON('/js/calories.json', function(data) {
             var total = 0;
             var text = "";
@@ -255,13 +264,31 @@ function loadCalories() {
                 document.getElementById("cal" + i).innerText = data[filename.toLowerCase()][i][1];
                 text += data[filename.toLowerCase()][i][0]  + ": " + data[filename.toLowerCase()][i][1] + "<br/>";
             }
-            console.log(total)
-            document.getElementById("calories-old").innerHTML = text + "Calories: " + total;
+            document.getElementById("calories-old").innerHTML = text + "<b>Calories: " + total + "</b>";
         });
     });
 }
+
+function loadReplace() {
+    $.getJSON('/js/replacement-calories.json', function(data) {
+        var ele = document.getElementById("replace-new");
+        for(var key in data) {
+            var child = document.createElement("option");
+            child.value = key;
+            child.innerText = key;
+            ele.appendChild(child);
+        }
+    });
+}
+
+function replace() {
+    var b = document.getElementById("replace-old").value;
+    var a = document.getElementById("replace-new").value;
+    window.location.replace("/food/replace/" + a + '/' + b);
+}
 syncImages();
 loadCalories();
+loadReplace();
 </script>
 </body>
 
